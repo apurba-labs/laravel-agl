@@ -1,0 +1,26 @@
+{
+    "name": "apurba-labs/laravel-agl",
+    "description": "Agentic Governance Layer for Laravel 13",
+    "type": "library",
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^13.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "ApurbaLabs\\LaravelAgl\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Apurba Singh",
+            "email": "apurbansinghdev@gmail.com"
+        }
+    ],
+    "config": {
+        "platform": {
+            "php": "8.5.0"
+        }
+    }
+}

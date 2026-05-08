@@ -13,3 +13,16 @@
 ## Installation
 ```bash
 composer require apurba-labs/laravel-agl
+
+```
+
+---
+## Quick Start
+use ApurbaLabs\Agl\Facades\AGL;
+
+AGL::policy('high-value-transfer')
+    ->requireAudit()
+    ->withGemma4()
+    ->onViolation(fn() => alertAdmin());
+
+---

@@ -1,0 +1,27 @@
+# 2026 GotiHub Package Standard
+
+# Composer dependencies
+/vendor/
+/composer.phar
+
+# Package-specific lock file (Recommended for libraries)
+composer.lock
+
+# IDE & OS files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+Thumbs.db
+
+# Laravel / PHP artifacts
+.phpunit.result.cache
+.php-cs-fixer.cache
+.phpactor.json
+auth.json
+
+# Local Environment (if you add tests later)
+.env
+.env.backup
+/tests/_output/
+/tests/_support/_generated/

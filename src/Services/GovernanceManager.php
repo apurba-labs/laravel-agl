@@ -51,14 +51,15 @@ class AglPolicy
     {
         $agent = new AglAgent();
         
-        // Use $this->name to give the AI context!
+        // $this->name to give the AI context!
         $prompt = "Policy: {$this->name}. Data: " . json_encode($data);
         $analysis = $agent->analyze($prompt);
 
         $proof = null;
         $approved = ($analysis->decision !== 'REJECTED');
 
-        // $this->strict: If risk is too high, we reject even if AI said 'Approved'
+        // $this->strict: If risk is too high, we reject even if AI said 'Approved'. 
+        // If the risk_score is > 70, the policy kills the transaction.
         if ($this->strict && $analysis->risk_score > 70) {
             $approved = false;
             $analysis->decision = 'REJECTED_BY_STRICT_POLICY';

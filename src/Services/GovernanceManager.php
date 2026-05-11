@@ -50,37 +50,50 @@ class AglPolicy
     public function evaluate(mixed $data): array
     {
         $agent = new AglAgent();
-        $analysis = $agent->analyze("Analyze this governance request: " . json_encode($data));
+        
+        // Use $this->name to give the AI context!
+        $prompt = "Policy: {$this->name}. Data: " . json_encode($data);
+        $analysis = $agent->analyze($prompt);
 
         $proof = null;
         $approved = ($analysis->decision !== 'REJECTED');
 
-        if ($approved && $this->useZk) {
-            $proof = $this->verifyWithMidnight($analysis);
-            $approved = isset($proof['proof_id']);
+        // $this->strict: If risk is too high, we reject even if AI said 'Approved'
+        if ($this->strict && $analysis->risk_score > 70) {
+            $approved = false;
+            $analysis->decision = 'REJECTED_BY_STRICT_POLICY';
         }
 
-        // Returning an array gives the Dashboard everything it needs
+        if ($approved && $this->useZk) {
+            $result = $this->verifyWithMidnight($analysis);
+            
+            // Check if the ZK verification actually returned the proof array
+            if (is_array($result) && isset($result['proof_id'])) {
+                $proof = $result;
+            } else {
+                $approved = false;
+            }
+        }
+
         return [
             'approved'   => $approved,
+            'policy'     => $this->name,
             'decision'   => $analysis->decision,
             'reasoning'  => $analysis->reasoning,
             'risk_score' => $analysis->risk_score,
-            'proof'      => $proof, // Contains proof_id, merkle_root, etc.
+            'proof'      => $proof,
         ];
     }
 
-    protected function verifyWithMidnight($analysis): bool
+    // Return type to mixed/array so evaluate() can get the proof data
+    protected function verifyWithMidnight($analysis): mixed
     {
-        // Resolve the contract from the Laravel Service Container
         $verifier = app(ZkVerifier::class);
         
-        $proof = $verifier->generateProof([
+        return $verifier->generateProof([
             'reasoning_hash' => hash('sha256', $analysis->reasoning),
-            'risk_score' => $analysis->risk_score,
-            'decision' => $analysis->decision
+            'risk_score'     => $analysis->risk_score,
+            'decision'       => $analysis->decision
         ]);
-
-        return isset($proof['proof_id']);
     }
 }

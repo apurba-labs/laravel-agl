@@ -1,11 +1,12 @@
 <?php
 
-namespace ApurbaLabs\LaravelAgl\Services;
+namespace ApurbaLabs\AGL\Services;
 
-use ApurbaLabs\LaravelAgl\Contracts\AglResult;
+use ApurbaLabs\AGL\Contracts\AglResult;
 use Illuminate\Support\Facades\Config;
 use Laravel\Ai\Ai; // The 2026 AI Facade
-use ApurbaLabs\LaravelAgl\Contracts\ZkVerifier;
+use ApurbaLabs\AGL\Contracts\ZkVerifier;
+use ApurbaLabs\AGL\Contracts\AglAuditor;
 class GovernanceManager
 {
     /**
@@ -51,9 +52,10 @@ class AglPolicy
     {
         $agent = new AglAgent();
         
+        $auditor = app(AglAuditor::class);
         // $this->name to give the AI context!
         $prompt = "Policy: {$this->name}. Data: " . json_encode($data);
-        $analysis = $agent->analyze($prompt);
+        $analysis = $auditor->analyze($prompt);
 
         $proof = null;
         $approved = ($analysis->decision !== 'REJECTED');

@@ -1,5 +1,5 @@
 <?php
-namespace ApurbaLabs\LaravelAgl\Contracts;
+namespace ApurbaLabs\AGL\Contracts;
 
 interface ZkVerifier
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace ApurbaLabs\Agl\Providers;
+namespace ApurbaLabs\AGL\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -15,7 +15,7 @@ class AglServiceProvider extends ServiceProvider
         
         // Bind the Governance Manager
         $this->app->singleton('agl', function ($app) {
-            return new \ApurbaLabs\Agl\Services\GovernanceManager($app);
+            return new \ApurbaLabs\AGL\Services\GovernanceManager($app);
         });
     }
 

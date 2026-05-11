@@ -1,6 +1,6 @@
 <?php
 
-namespace ApurbaLabs\LaravelAgl\Services;
+namespace ApurbaLabs\AGL\Services;
 
 use Laravel\Ai\Ai;
 use Illuminate\Support\Facades\Log;

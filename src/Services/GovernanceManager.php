@@ -5,7 +5,7 @@ namespace ApurbaLabs\LaravelAgl\Services;
 use ApurbaLabs\LaravelAgl\Contracts\AglResult;
 use Illuminate\Support\Facades\Config;
 use Laravel\Ai\Ai; // The 2026 AI Facade
-
+use ApurbaLabs\LaravelAgl\Contracts\ZkVerifier;
 class GovernanceManager
 {
     /**
@@ -68,7 +68,15 @@ class AglPolicy
 
     protected function verifyWithMidnight($analysis): bool
     {
-        // Logic to hit Repo 4 (The Bun Bridge)
-        return true; 
+        // Resolve the contract from the Laravel Service Container
+        $verifier = app(ZkVerifier::class);
+        
+        $proof = $verifier->generateProof([
+            'reasoning_hash' => hash('sha256', $analysis->reasoning),
+            'risk_score' => $analysis->risk_score,
+            'decision' => $analysis->decision
+        ]);
+
+        return isset($proof['proof_id']);
     }
 }

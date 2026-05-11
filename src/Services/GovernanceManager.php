@@ -84,7 +84,8 @@ class AglPolicy
             'decision'   => $analysis->decision,
             'reasoning'  => $analysis->reasoning,
             'risk_score' => $analysis->risk_score,
-            'proof'      => $proof,
+            'proof'      => $proof, // The full array
+            'proof_id'   => $proof['proof_id'] ?? null,
         ];
     }
 

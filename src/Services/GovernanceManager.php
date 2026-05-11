@@ -47,23 +47,27 @@ class AglPolicy
     /**
      * The Core Execution Loop
      */
-    public function evaluate(mixed $data): bool
+    public function evaluate(mixed $data): array
     {
-        // Invoke the Agentic Layer to perform a zero-trust analysis of the request.
         $agent = new AglAgent();
-        $analysis = $agent->prompt("Analyze this governance request: " . json_encode($data));
+        $analysis = $agent->analyze("Analyze this governance request: " . json_encode($data));
 
-        // Process the heuristic decision provided by the LLM reasoning engine.
-        if ($analysis->decision === 'REJECTED') {
-            return false;
+        $proof = null;
+        $approved = ($analysis->decision !== 'REJECTED');
+
+        if ($approved && $this->useZk) {
+            $proof = $this->verifyWithMidnight($analysis);
+            $approved = isset($proof['proof_id']);
         }
 
-        // If the policy requires cryptographic immutability, dispatch to the ZK-Sidecar.
-        if ($this->useZk) {
-            return $this->verifyWithMidnight($analysis);
-        }
-
-        return true;
+        // Returning an array gives the Dashboard everything it needs
+        return [
+            'approved'   => $approved,
+            'decision'   => $analysis->decision,
+            'reasoning'  => $analysis->reasoning,
+            'risk_score' => $analysis->risk_score,
+            'proof'      => $proof, // Contains proof_id, merkle_root, etc.
+        ];
     }
 
     protected function verifyWithMidnight($analysis): bool

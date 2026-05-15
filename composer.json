@@ -1,34 +1,56 @@
 {
     "name": "apurba-labs/laravel-agl",
     "description": "Agentic Governance Layer for Laravel 13",
+    "keywords": [
+        "laravel",
+        "ai",
+        "agentic-ai",
+        "governance",
+        "middleware",
+        "security",
+        "compliance",
+        "llm"
+    ],
     "type": "library",
+    "license": "MIT",
+
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "illuminate/support": "^13.0",
         "laravel/ai": "^0.6.7"
     },
-    "license": "MIT",
+
     "autoload": {
         "psr-4": {
             "ApurbaLabs\\AGL\\": "src/"
         }
     },
-    "authors": [
-        {
-            "name": "Apurba Singh",
-            "email": "apurbansinghdev@gmail.com"
-        }
-    ],
-    "config": {
-        "platform": {
-            "php": "8.5.0"
+
+    "autoload-dev": {
+        "psr-4": {
+            "ApurbaLabs\\AGL\\Tests\\": "tests/"
         }
     },
+
     "extra": {
         "laravel": {
             "providers": [
                 "ApurbaLabs\\AGL\\Providers\\AglServiceProvider"
             ]
         }
+    },
+
+    "authors": [
+        {
+            "name": "Apurba Singh",
+            "email": "apurbansinghdev@gmail.com"
+        }
+    ],
+
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+
+    "config": {
+        "sort-packages": true
     }
 }

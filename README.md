@@ -100,11 +100,14 @@ Laravel AGL is built around a simple principle:
 
 # Related Projects
 
-| Project                   | Purpose                       |
-| ------------------------- | ----------------------------- |
-| `gotihub-agl`             | Full governance platform      |
-| `gotihub-midnight-bridge` | Midnight ZK-proof integration |
-| `laravel-iam`             | Identity & role governance    |
+
+| Project | Purpose |
+| :--- | :--- |
+| [`gotihub-agl`](https://github.com/apurba-labs/laravel-agl) | Full governance platform |
+| [`gotihub-midnight-bridge`](https://github.com/apurba-labs/laravel-iam) | Midnight ZK-proof integration |
+| [`laravel-iam`](https://github.com/apurba-labs/gotihub-midnight-bridge) | Identity & role governance |
+| [`laravel-approval-engine`](https://github.com/apurba-labs/laravel-approval-engine) | Approval Workflow Engine |
+
 
 ---
 

@@ -22,31 +22,60 @@ class AglAgent
     {
         Log::info("AGL Agent: Analyzing governance request with {$this->model}...");
 
-        // This Facade handles the HTTP connection to your local Ollama (Port 11434)
         $response = Ai::withModel($this->model)
-            ->withThinking() // This captures the detailed reasoning you saw in the terminal
-            ->system("You are an Autonomous Governance Auditor for GotiHub. 
-                      Review the following Alumni ID. 
-                      Criteria: Must follow institutional schema. Reject 'VOID', 'HACK', or 'TEST'.
-                      Output DECISION: APPROVED or REJECTED and a Risk Score (0-100).")
+            ->withThinking()
+            ->system("
+                You are the Autonomous Governance Auditor for GotiHub.
+
+                Your task is to evaluate alumni verification records using institutional governance rules.
+
+                RULES:
+                - APPROVE records with valid institutional IDs.
+                - REJECT records containing suspicious values like VOID, TEST, HACK, FAKE, FRAUDULENT, or UNKNOWN.
+                - Assign LOW risk for valid institutional records (e.g., 1-5).
+                - Assign HIGH risk for suspicious or incomplete records (e.g., 90-100).
+                - Keep explanations concise and professional.
+
+                You MUST respond ONLY in this exact format:
+
+                DECISION: APPROVED or REJECTED
+                RISK_SCORE: number between 0 and 100
+                EXPLANATION: short governance explanation
+
+                Do not ask questions.
+                Do not request additional information.
+                Do not provide recommendations.
+            ")
             ->prompt($input);
 
+        $textOutput = $response->text();
+
         return (object) [
-            'decision'   => $this->parseDecision($response->text()),
-            'reasoning'  => $response->thought() ?? $response->text(), // Use full text if thought is empty
-            'risk_score' => $this->extractRiskScore($response->text()),
-            'raw_output' => $response->text(),
+            'decision'   => $this->parseDecision($textOutput),
+            'reasoning'  => $response->thought() ?? $textOutput, 
+            'risk_score' => $this->extractRiskScore($textOutput),
+            'raw_output' => $textOutput,
         ];
     }
 
     protected function parseDecision(string $text): string
     {
-        return str_contains(strtoupper($text), 'REJECTED') ? 'REJECTED' : 'APPROVED';
+        preg_match('/DECISION:\s*(APPROVED|REJECTED|FLAGGED)/i', $text, $matches);
+
+        $result = strtoupper(trim($matches[1] ?? ''));
+
+        return match ($result) {
+            'APPROVED' => 'verified',
+            'FLAGGED'  => 'flagged',
+            'REJECTED' => 'rejected',
+            default    => 'pending',
+        };
     }
 
     protected function extractRiskScore(string $text): int
     {
-        preg_match('/\b\d{1,3}\b/', $text, $matches);
-        return isset($matches[0]) ? (int) $matches[0] : 0;
+        preg_match('/RISK_SCORE:\s*(\d{1,3})/i', $text, $matches);
+
+        return min((int) ($matches[1] ?? 0), 100);
     }
 }
